@@ -1,0 +1,27 @@
+#! /bin/bash
+
+args=$@
+
+if [[ "$#" -eq "0" ]] ; then
+    while read a
+    do
+        args+=$a
+    done
+fi
+
+
+print_help()
+{
+    echo "usage: $(basename $1) command or multiply command"
+    exit 1
+}
+
+
+to_hex()
+{
+    echo "$args" | xxd -p | sed 's/\(..\)/\\x\1/g'
+}
+
+
+for arg in $args; do if [[ "--help" == "$arg" ]]; then print_help $0 ; fi ; done
+to_hex
