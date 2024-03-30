@@ -1,0 +1,43 @@
+#! /bin/bash
+
+args=$@
+
+if [[ "$#" -eq "0" ]] ; then
+    while read a
+    do
+        args+=$a
+    done
+fi
+
+print_help()
+{
+    echo -e "usage:\t$(basename $0) hex_string\nexample:\t$0 \\\x61\\\x61"
+    exit 1
+}
+
+prepare_args()
+{
+    local new_args
+    local count
+    count=0
+    if [[ "${args:0:1}" != "\\" ]]; then
+        for i in $(seq 0 $((${#args}-1))) ; do
+            if [ $((count%3)) -eq 0 ] ; then new_args+="\\" ; fi
+            new_args+="${args:i:1}"
+            ((count++))
+        done
+        args=$new_args
+    fi
+}
+
+
+from_hex()
+{
+    printf "$args"
+}
+
+
+for arg in $args; do if [[ "--help" == "$arg" ]]; then print_help $0 ; fi ; done
+
+prepare_args
+from_hex
